@@ -100,6 +100,15 @@ const LoginPage = () => {
           >
             {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
           </Button>
+
+          <Box textAlign="center">
+            <Typography variant="body2">
+              Don't have an account?{' '}
+              <Link to="/signup" style={{ color: '#7c4dff' }}>
+                Sign up
+              </Link>
+            </Typography>
+          </Box>
         </Box>
       </Paper>
     </Container>
