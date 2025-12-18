@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/authContext';
+import { Link } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -9,16 +8,12 @@ import {
   Typography,
   Box,
   Alert,
-  CircularProgress,
 } from '@mui/material';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const validateForm = () => {
     if (!username.trim()) {
@@ -36,7 +31,7 @@ const LoginPage = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
 
@@ -44,15 +39,7 @@ const LoginPage = () => {
       return;
     }
 
-    setIsSubmitting(true);
-    const result = await login(username.trim(), password);
-
-    if (result.success) {
-      navigate('/');
-    } else {
-      setError(result.error || 'Login failed. Please try again.');
-    }
-    setIsSubmitting(false);
+    console.log('Login form submitted:', { username: username.trim(), password });
   };
 
   return (
@@ -76,7 +63,6 @@ const LoginPage = () => {
             onChange={(e) => setUsername(e.target.value)}
             margin="normal"
             required
-            disabled={isSubmitting}
             autoFocus
           />
 
@@ -88,7 +74,6 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             margin="normal"
             required
-            disabled={isSubmitting}
           />
 
           <Button
@@ -96,9 +81,8 @@ const LoginPage = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={isSubmitting}
           >
-            {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
+            Login
           </Button>
 
           <Box textAlign="center">

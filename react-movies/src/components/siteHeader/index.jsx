@@ -6,6 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import Button from "@mui/material/Button";
 import { useNavigate } from "react-router";
 import { styled } from '@mui/material/styles';
 
@@ -14,7 +15,6 @@ const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 const SiteHeader = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-
   const navigate = useNavigate();
 
   const menuOptions = [
@@ -44,7 +44,7 @@ const SiteHeader = () => {
         position="fixed" 
         color="transparent" 
         sx={{ 
-          backgroundColor: (theme) => theme.palette.secondary.dark + 'CC', // ~80% alpha, darker shade
+          backgroundColor: (theme) => theme.palette.secondary.dark + 'CC',
           boxShadow: 'none',
           backdropFilter: 'blur(6px)',
           borderBottom: '1px solid rgba(255,255,255,0.12)'
@@ -54,15 +54,32 @@ const SiteHeader = () => {
           <Typography variant="h4" sx={{ flexGrow: 1 }}>
             TMDB Client
           </Typography>
-            <IconButton
-              aria-label="menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
+          
+          <Button 
+            color="inherit" 
+            onClick={() => navigate('/login')}
+            sx={{ mr: 1 }}
+          >
+            Login
+          </Button>
+          <Button 
+            color="inherit" 
+            onClick={() => navigate('/signup')}
+            variant="outlined"
+            sx={{ mr: 1 }}
+          >
+            Sign Up
+          </Button>
+
+          <IconButton
+            aria-label="menu"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleMenu}
+            color="inherit"
+          >
+            <MenuIcon />
+          </IconButton>
             <Menu
               id="menu-appbar"
               anchorEl={anchorEl}

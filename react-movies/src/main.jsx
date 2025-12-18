@@ -13,6 +13,8 @@ import TrendingMoviesPage from "./pages/trendingMoviesPage";
 import LatestMoviePage from "./pages/latestMoviePage";
 import PersonDetailsPage from "./pages/personDetailsPage";
 import PlaylistPage from "./pages/playlistPage";
+import LoginPage from "./pages/loginPage";
+import SignupPage from "./pages/signupPage";
 import SiteHeader from './components/siteHeader'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -71,6 +73,8 @@ const App = () => {
       <BrowserRouter>
         <SiteHeader />
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
           <Route path="/reviews/:id" element={ <MovieReviewPage /> } />
           <Route path="/reviews/form" element={<AddMovieReviewPage />} />
           <Route path="/movies/favorites" element={<FavoriteMoviesPage />} />
