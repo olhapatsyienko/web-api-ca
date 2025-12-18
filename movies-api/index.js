@@ -1,7 +1,7 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-
+import moviesRouter from './api/movies'; 
 // Load environment variables FIRST before importing anything that uses them
 dotenv.config();
 
@@ -31,7 +31,7 @@ const port = process.env.PORT;
 
 // Enable CORS for all requests
 app.use(cors());
-
+app.use('/api/movies', moviesRouter); 
 app.use(express.json());
 app.use('/api/users', usersRouter);
 app.use(errHandler);
