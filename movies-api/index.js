@@ -1,9 +1,9 @@
-import cors from 'cors';
 import dotenv from 'dotenv';
-import express from 'express';
-import moviesRouter from './api/movies'; 
-// Load environment variables FIRST before importing anything that uses them
 dotenv.config();
+
+import cors from 'cors';
+import express from 'express';
+import moviesRouter from './api/movies';
 
 import usersRouter from './api/users';
 import './db';
