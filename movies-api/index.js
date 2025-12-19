@@ -5,6 +5,7 @@ import cors from 'cors';
 import express from 'express';
 import moviesRouter from './api/movies';
 import usersRouter from './api/users';
+import userMoviesRouter from './api/userMovies';
 import './db';
 
 const errHandler = (err, req, res, next) => {
@@ -30,9 +31,10 @@ const port = process.env.PORT;
 
 // Enable CORS for all requests
 app.use(cors());
-app.use('/api/movies', moviesRouter); 
 app.use(express.json());
+app.use('/api/movies', moviesRouter); 
 app.use('/api/users', usersRouter);
+app.use('/api/user-movies', userMoviesRouter);
 app.use(errHandler);
 
 if (!process.env.MONGO_DB) {
