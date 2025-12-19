@@ -9,15 +9,17 @@ import Menu from "@mui/material/Menu";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router";
 import { styled } from '@mui/material/styles';
+import { useAuth } from '../../contexts/authContext';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 const SiteHeader = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const menuOptions = [
+  const publicMenuOptions = [
     { label: "Home", path: "/" },
     { label: "Trending", path: "/movies/trending" },
     { label: "Latest", path: "/movies/latest" },
@@ -25,9 +27,15 @@ const SiteHeader = () => {
     { label: "Popular", path: "/movies/popular" },
     { label: "Now Playing", path: "/movies/now-playing" },
     { label: "Upcoming", path: "/movies/upcoming" },
+  ];
+
+  const authenticatedMenuOptions = [
+    ...publicMenuOptions,
     { label: "Favorites", path: "/movies/favorites" },
     { label: "My Playlist", path: "/movies/playlist" },
   ];
+
+  const menuOptions = isAuthenticated ? authenticatedMenuOptions : publicMenuOptions;
 
   const handleMenuSelect = (pageURL) => {
     setAnchorEl(null);
@@ -36,6 +44,11 @@ const SiteHeader = () => {
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -55,21 +68,38 @@ const SiteHeader = () => {
             TMDB Client
           </Typography>
           
-          <Button 
-            color="inherit" 
-            onClick={() => navigate('/login')}
-            sx={{ mr: 1 }}
-          >
-            Login
-          </Button>
-          <Button 
-            color="inherit" 
-            onClick={() => navigate('/signup')}
-            variant="outlined"
-            sx={{ mr: 1 }}
-          >
-            Sign Up
-          </Button>
+          {isAuthenticated ? (
+            <>
+              <Typography variant="body1" sx={{ mr: 2 }}>
+                Welcome, {user?.username}
+              </Typography>
+              <Button 
+                color="inherit" 
+                onClick={handleLogout}
+                sx={{ mr: 1 }}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button 
+                color="inherit" 
+                onClick={() => navigate('/login')}
+                sx={{ mr: 1 }}
+              >
+                Login
+              </Button>
+              <Button 
+                color="inherit" 
+                onClick={() => navigate('/signup')}
+                variant="outlined"
+                sx={{ mr: 1 }}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
 
           <IconButton
             aria-label="menu"
