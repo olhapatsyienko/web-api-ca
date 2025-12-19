@@ -19,6 +19,7 @@ import SiteHeader from './components/siteHeader'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import MoviesContextProvider from "./contexts/moviesContext";
+import { AuthProvider } from "./contexts/authContext";
 import AddMovieReviewPage from './pages/addMovieReviewPage'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -100,15 +101,17 @@ const App = () => {
 const rootElement = createRoot( document.getElementById("root") )
 rootElement.render(
   <QueryClientProvider client={queryClient}>
-    <MoviesContextProvider>
-      <div id="app-gradient-bg" style={{
-        position: 'relative',
-        minHeight: '100vh',
-        background: 'radial-gradient(1200px 700px at 15% 0%, rgba(124,77,255,0.3) 0%, rgba(124,77,255,0) 60%), radial-gradient(1000px 600px at 120% 10%, rgba(142,36,170,0.28) 0%, rgba(142,36,170,0) 60%), linear-gradient(180deg, #08030f 0%, #0f061a 50%, #170b25 100%)'
-      }}>
-        <App />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </div>
-    </MoviesContextProvider>
+    <AuthProvider>
+      <MoviesContextProvider>
+        <div id="app-gradient-bg" style={{
+          position: 'relative',
+          minHeight: '100vh',
+          background: 'radial-gradient(1200px 700px at 15% 0%, rgba(124,77,255,0.3) 0%, rgba(124,77,255,0) 60%), radial-gradient(1000px 600px at 120% 10%, rgba(142,36,170,0.28) 0%, rgba(142,36,170,0) 60%), linear-gradient(180deg, #08030f 0%, #0f061a 50%, #170b25 100%)'
+        }}>
+          <App />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </div>
+      </MoviesContextProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );

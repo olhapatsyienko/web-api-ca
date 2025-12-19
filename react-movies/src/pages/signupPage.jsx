@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/authContext';
 import {
   Container,
   Paper,
@@ -8,6 +9,7 @@ import {
   Typography,
   Box,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 
 const SignupPage = () => {
@@ -15,6 +17,9 @@ const SignupPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signup } = useAuth();
+  const navigate = useNavigate();
 
   const validateUsername = (username) => {
     if (!username.trim()) {
@@ -72,7 +77,7 @@ const SignupPage = () => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -80,7 +85,15 @@ const SignupPage = () => {
       return;
     }
 
-    console.log('Signup form submitted:', { username: username.trim(), password });
+    setIsSubmitting(true);
+    const result = await signup(username.trim(), password);
+
+    if (result.success) {
+      navigate('/');
+    } else {
+      setError(result.error || 'Signup failed. Please try again.');
+    }
+    setIsSubmitting(false);
   };
 
   return (
@@ -107,6 +120,7 @@ const SignupPage = () => {
             }}
             margin="normal"
             required
+            disabled={isSubmitting}
             autoFocus
             helperText="3-20 characters, letters, numbers and underscores only"
           />
@@ -122,6 +136,7 @@ const SignupPage = () => {
             }}
             margin="normal"
             required
+            disabled={isSubmitting}
             helperText="At least 8 characters with one letter, one digit and one special character (@$!%*#?&)"
           />
 
@@ -136,6 +151,7 @@ const SignupPage = () => {
             }}
             margin="normal"
             required
+            disabled={isSubmitting}
           />
 
           <Button
@@ -143,8 +159,9 @@ const SignupPage = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={isSubmitting}
           >
-            Sign Up
+            {isSubmitting ? <CircularProgress size={24} /> : 'Sign Up'}
           </Button>
 
           <Box textAlign="center">
