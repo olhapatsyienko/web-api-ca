@@ -12,10 +12,10 @@ const authenticate = async (req, res, next) => {
             });
         }
 
-        const token = authHeader.substring(7); 
+        const token = authHeader.substring(7);
 
         if (!process.env.SECRET) {
-            throw new Error('JWT_SECRET is not configured');
+            throw new Error('jwt_secret is not configured');
         }
 
         const decoded = jwt.verify(token, process.env.SECRET);

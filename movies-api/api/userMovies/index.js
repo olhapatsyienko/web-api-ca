@@ -1,6 +1,6 @@
 import express from 'express';
 import UserMovie from './userMovieModel';
-import authenticate from './authenticate';
+import authenticate from '../middleware/authenticate';
 import asyncHandler from 'express-async-handler';
 
 const router = express.Router();
