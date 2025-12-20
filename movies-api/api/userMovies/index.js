@@ -244,5 +244,29 @@ router.put('/:id', asyncHandler(async (req, res) => {
 }));
 
 
+//DELETE /api/user-movies/:id 
+router.delete('/:id', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const userMovie = await UserMovie.findOneAndDelete({ 
+        _id: id, 
+        userId: req.user._id 
+    });
+
+    if (!userMovie) {
+        return res.status(404).json({ 
+            success: false, 
+            msg: 'movie entry not found or you do not have permission to delete it' 
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        msg: 'movie removed from collection successfully'
+    });
+}));
+
+
+
 export default router;
 
