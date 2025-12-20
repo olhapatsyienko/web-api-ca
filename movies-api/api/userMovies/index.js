@@ -171,5 +171,78 @@ router.post('/', asyncHandler(async (req, res) => {
         data: userMovie
     });
 }));
+
+//PUT /api/user-movies/:id 
+router.put('/:id', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { review, type } = req.body;
+
+    //find the entry and verify it belongs to the user
+    const userMovie = await UserMovie.findOne({ 
+        _id: id, 
+        userId: req.user._id 
+    });
+
+    if (!userMovie) {
+        return res.status(404).json({ 
+            success: false, 
+            msg: 'movie entry not found or you do not have permission to update it' 
+        });
+    }
+
+    //update type if provided
+    if (type) {
+        if (!['favorite', 'playlist', 'review'].includes(type)) {
+            return res.status(400).json({ 
+                success: false, 
+                msg: 'invalid type. Must be one of: favorite, playlist, review' 
+            }); 
+        }
+        userMovie.type = type;
+    }
+
+    //update review if provided
+    if (review !== undefined) {
+        if (userMovie.type !== 'review' && review) {
+            return res.status(400).json({ 
+                success: false, 
+                msg: 'cannot add review to non-review entry. change type to review first' 
+            });
+        }
+
+        if (review) {
+            if (review.rating !== undefined) {
+                if (typeof review.rating !== 'number' || review.rating < 1 || review.rating > 10) {
+                    return res.status(400).json({ 
+                        success: false, 
+                        msg: 'rating must be a number between 1 and 10' 
+                    });
+                }
+                userMovie.review = userMovie.review || {};
+                userMovie.review.rating = review.rating;
+            }
+            if (review.comment !== undefined) {
+                userMovie.review = userMovie.review || {};
+                userMovie.review.comment = review.comment;
+            }
+            if (review.rating || review.comment) {
+                userMovie.review.date = new Date();
+            }
+        } else {
+            //remove review
+            userMovie.review = undefined;
+        }
+    }
+
+    await userMovie.save();
+    
+    res.status(200).json({
+        success: true,
+        msg: 'movie entry updated successfully',
+        data: userMovie
+    });
+}));
+
+
 export default router;
 
