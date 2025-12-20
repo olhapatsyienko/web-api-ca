@@ -91,5 +91,85 @@ router.get('/:movieId', asyncHandler(async (req, res) => {
     });
 }));
 
+//POST /api/user-movies 
+router.post('/', asyncHandler(async (req, res) => {
+    const { movieId, type, review } = req.body;
+
+    //validation
+    if (!movieId || typeof movieId !== 'number') {
+        return res.status(400).json({ 
+            success: false, 
+            msg: 'movieId is required and must be a number' 
+        });
+    }
+
+    if (!type || !['favorite', 'playlist', 'review'].includes(type)) {
+        return res.status(400).json({ 
+            success: false, 
+            msg: 'type is required and must be one of: favorite, playlist or review' 
+        });
+    }
+
+    //if type is review validate data
+    if (type === 'review') {
+        if (!review) {
+            return res.status(400).json({ 
+                success: false, 
+                msg: 'review object is required when type is review' 
+            });
+        }
+        if (review.rating !== undefined) {
+            if (typeof review.rating !== 'number' || review.rating < 1 || review.rating > 10) {
+                return res.status(400).json({ 
+                    success: false, 
+                    msg: 'rating must be a number between 1 and 10' 
+                });
+            }
+        }
+        if (!review.rating && !review.comment) {
+            return res.status(400).json({ 
+                success: false, 
+                msg: 'review must have at least a rating or a comment' 
+            });
+        }
+    }
+
+    //сheck if entry already exists
+    const existing = await UserMovie.findOne({ 
+        userId: req.user._id, 
+        movieId: movieId, 
+        type: type 
+    });
+
+    if (existing) {
+        return res.status(409).json({ 
+            success: false, 
+            msg: `this movie is already in your ${type} collection` 
+        });
+    }
+
+    //сreate new entry
+    const userMovieData = {
+        userId: req.user._id,
+        movieId: movieId,
+        type: type
+    };
+
+    if (type === 'review' && review) {
+        userMovieData.review = {
+            rating: review.rating,
+            comment: review.comment || '',
+            date: new Date()
+        };
+    }
+
+    const userMovie = await UserMovie.create(userMovieData);
+    
+    res.status(201).json({
+        success: true,
+        msg: `movie successfully added to ${type} collection`,
+        data: userMovie
+    });
+}));
 export default router;
 
