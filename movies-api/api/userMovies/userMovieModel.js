@@ -46,7 +46,9 @@ UserMovieSchema.index({ userId: 1, movieId: 1, type: 1 }, { unique: true });
 
 UserMovieSchema.pre('save', function(next) {
     this.updatedAt = Date.now();
-    next();
+    if (typeof next === 'function') {
+        next();
+    }
 });
 
 export default mongoose.model('UserMovie', UserMovieSchema);

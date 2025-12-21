@@ -9,19 +9,26 @@ import userMoviesRouter from './api/userMovies';
 import './db';
 
 const errHandler = (err, req, res, next) => {
-  if (!res.headersSent) {
-    if(process.env.NODE_ENV === 'production') {
-      return res.status(500).json({ success: false, msg: 'Something went wrong!' });
-    }
-    return res.status(500).json({ 
-      success: false, 
-      msg: err?.message || 'Internal server error'
-    });
+  if (res.headersSent) {
+    return;
   }
   
-  if (typeof next === 'function') {
-    next(err);
+  console.error('Error details:', {
+    message: err?.message,
+    stack: err?.stack,
+    name: err?.name,
+    code: err?.code
+  });
+  
+  if(process.env.NODE_ENV === 'production') {
+    return res.status(500).json({ success: false, msg: 'Something went wrong!' });
   }
+  
+  const errorMessage = err?.message || 'Internal server error';
+  return res.status(500).json({ 
+    success: false, 
+    msg: errorMessage
+  });
 };
 
 

@@ -163,13 +163,24 @@ router.post('/', asyncHandler(async (req, res) => {
         };
     }
 
-    const userMovie = await UserMovie.create(userMovieData);
-    
-    res.status(201).json({
-        success: true,
-        msg: `movie successfully added to ${type} collection`,
-        data: userMovie
-    });
+    try {
+        const userMovie = await UserMovie.create(userMovieData);
+        
+        res.status(201).json({
+            success: true,
+            msg: `movie successfully added to ${type} collection`,
+            data: userMovie
+        });
+    } catch (error) {
+        console.error('Error creating user movie:', error);
+        if (error.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                msg: `this movie is already in your ${type} collection`
+            });
+        }
+        throw error;
+    }
 }));
 
 //PUT /api/user-movies/:id 
