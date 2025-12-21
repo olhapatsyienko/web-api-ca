@@ -10,28 +10,10 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { useNavigate } from "react-router";
 
-const ratings = [
-  {
-    value: 5,
-    label: "Excellent",
-  },
-  {
-    value: 4,
-    label: "Good",
-  },
-  {
-    value: 3,
-    label: "Average",
-  },
-  {
-    value: 2,
-    label: "Poor",
-  },
-  {
-    value: 0,
-    label: "Terrible",
-  },
-];
+const ratings = Array.from({ length: 11 }, (_, i) => ({
+  value: i,
+  label: i.toString(),
+}));
 
 const styles = {
   root: {
@@ -62,7 +44,7 @@ const styles = {
 
 const ReviewForm = ({ movie }) => {
   const context = useContext(MoviesContext);
-  const [rating, setRating] = useState(3);
+  const [rating, setRating] = useState(5);
   const [open, setOpen] = useState(false); 
   const navigate = useNavigate();
 
@@ -70,7 +52,7 @@ const ReviewForm = ({ movie }) => {
     author: "",
     review: "",
     agree: false,
-    rating: "3",
+    rating: "5",
   };
   
   const {
@@ -197,7 +179,7 @@ const ReviewForm = ({ movie }) => {
             >
               {ratings.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+                  {option.value}
                 </MenuItem>
               ))}
             </TextField>
