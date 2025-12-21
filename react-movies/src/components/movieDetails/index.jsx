@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Chip from "@mui/material/Chip";
 import Paper from "@mui/material/Paper";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -6,10 +6,15 @@ import MonetizationIcon from "@mui/icons-material/MonetizationOn";
 import StarRate from "@mui/icons-material/StarRate";
 import SavingsIcon from "@mui/icons-material/Savings";
 import NavigationIcon from "@mui/icons-material/Navigation";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import Fab from "@mui/material/Fab";
 import Typography from "@mui/material/Typography";
 import Drawer from "@mui/material/Drawer";
-import MovieReviews from "../../moviesReviews"
+import MovieReviews from "../../moviesReviews";
+import { MoviesContext } from "../../contexts/moviesContext";
+import { useAuth } from "../../contexts/authContext";
+import { getMovieData } from "../../api/user-movies-api";
+import Box from "@mui/material/Box";
 
 
 const root = {
@@ -24,10 +29,50 @@ const chip = { margin: 0.5 };
 
 const MovieDetails = ({ movie }) => {  
     const [drawerOpen, setDrawerOpen] = useState(false);
-    
+    const [userMovieData, setUserMovieData] = useState(null);
+    const { isAuthenticated } = useAuth();
+    const { favorites, myReviews } = useContext(MoviesContext);
+    const isFavorite = favorites?.includes(movie.id);
+    const userReview = myReviews?.[movie.id];
+
+    useEffect(() => {
+      if (isAuthenticated && movie?.id) {
+        getMovieData(movie.id)
+          .then((data) => {
+            setUserMovieData(data);
+          })
+          .catch(() => {
+            setUserMovieData([]);
+          });
+      } else {
+        setUserMovieData([]);
+      }
+    }, [isAuthenticated, movie?.id]);
+
+    const userRating = userMovieData?.find(entry => entry.type === 'review' && entry.review?.rating);
 
   return (
     <>
+      {isAuthenticated && (
+        <Box sx={{ mb: 2 }}>
+          {isFavorite && (
+            <Chip
+              icon={<FavoriteIcon />}
+              label="In your favorites"
+              color="error"
+              sx={{ mr: 1, mb: 1 }}
+            />
+          )}
+          {userRating && (
+            <Chip
+              icon={<StarRate />}
+              label={`Your rating: ${userRating.review.rating}/10`}
+              color="primary"
+              sx={{ mr: 1, mb: 1 }}
+            />
+          )}
+        </Box>
+      )}
       <Typography variant="h5" component="h3">
         Overview
       </Typography>
