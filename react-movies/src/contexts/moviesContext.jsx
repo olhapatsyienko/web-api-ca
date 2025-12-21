@@ -25,14 +25,12 @@ const MoviesContextProvider = (props) => {
   const [reviewsEntries, setReviewsEntries] = useState([]);  
   const [isLoading, setIsLoading] = useState(false);
 
- //load user data from API when authenticated
   useEffect(() => {
     if (isAuthenticated && token) {
       loadUserData();
     }
   }, [isAuthenticated, token]);
 
-  //load all user-specific movie data from the API
   const loadUserData = async () => {
     setIsLoading(true);
     try {
@@ -42,17 +40,14 @@ const MoviesContextProvider = (props) => {
         getReviews().catch(() => []),
       ]);
 
-      //update favorites
       const favoriteIds = favoritesData.map((entry) => entry.movieId);
       setFavorites(favoriteIds);
       setFavoritesEntries(favoritesData);
 
-      //update playlist
       const playlistIds = playlistData.map((entry) => entry.movieId);
       setPlaylist(playlistIds);
       setPlaylistEntries(playlistData);
 
-    //update reviews
       const reviewsObj = {};
       reviewsData.forEach((entry) => {
         if (entry.review) {
@@ -88,27 +83,24 @@ const MoviesContextProvider = (props) => {
 
       const entry = await addUserMovie(movie.id, "favorite");
       
-      //update both simplified array and full entries array
       setFavorites((prev) => [...prev, movie.id]);
       setFavoritesEntries((prev) => [...prev, entry]);
     } catch (error) {
-      console.error("Failed to add to favorites:", error);
+      console.error("failed to add to favorites:", error);
       throw error;
     }
   };
 
   const removeFromFavorites = async (movie) => {
     if (!isAuthenticated) {
-      console.error("User must be authenticated to remove favorites");
+      console.error("user must be authenticated to remove favorites");
       return;
     }
 
     try {
-      //find the full entry to get the _id needed for API delete
       const entry = favoritesEntries.find((e) => e.movieId === movie.id);
       if (entry) {
-        //call API to delete from database
-        await deleteUserMovie(entry._id);        
+        await deleteUserMovie(entry._id);
         setFavorites((prev) => prev.filter((id) => id !== movie.id));
         setFavoritesEntries((prev) => prev.filter((e) => e._id !== entry._id));
       }

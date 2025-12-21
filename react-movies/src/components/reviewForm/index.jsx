@@ -84,12 +84,16 @@ const ReviewForm = ({ movie }) => {
     setRating(event.target.value);
   };
 
-  const onSubmit = (review) => {
+  const onSubmit = async (review) => {
     review.movieId = movie.id;
     review.rating = rating;
-    // console.log(review);
-    context.addReview(movie, review);
-    setOpen(true); // NEW
+    
+    try {
+      await context.addReview(movie, review);
+      setOpen(true);
+    } catch (error) {
+      console.error("failed to submit review:", error);
+    }
   };
 
   const handleSnackClose = (event, reason) => {

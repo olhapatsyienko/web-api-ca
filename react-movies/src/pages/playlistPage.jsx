@@ -8,7 +8,11 @@ import AddToPlaylist from "../components/cardIcons/addToPlaylist";
 import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
 
 const PlaylistPage = () => {
-  const { playlist: movieIds } = useContext(MoviesContext);
+  const { playlist: movieIds, isLoading } = useContext(MoviesContext);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   const playlistQueries = useQueries({
     queries: movieIds.map((movieId) => ({

@@ -9,7 +9,11 @@ import WriteReview from "../components/cardIcons/writeReview";
 
 
 const FavoriteMoviesPage = () => {
-  const {favorites: movieIds } = useContext(MoviesContext);
+  const { favorites: movieIds, isLoading } = useContext(MoviesContext);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   // Create an array of queries and run in parallel.
   const favoriteMovieQueries = useQueries({
